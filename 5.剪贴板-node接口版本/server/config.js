@@ -11,17 +11,15 @@ let {portIsOccupied} = require('./portIsOccupied')
 // import { portIsOccupied } from './portIsOccupied'
 // import './constant/importFile/index.js'
 const app = express()
-app.all('*', function(req, res, next) {
-  var orginList = [
-    'http://beike.xdf.cn',
-    'http://localhost:5657',
-    'http://127.0.0.1:8886',
-    'http://127.0.0.1'
-  ]
-  if (orginList.includes(req.headers.origin.toLowerCase())) {
+app.all('*', function (req, res, next) {
+  // var orginList = [
+  //   'http://beike.xdf.cn',
+  //   'http://localhost:5657',
+  //   'http://127.0.0.1:8886',
+  //   'http://127.0.0.1'
+  // ]
     // 设置允许跨域的域名，*代表允许任意域名跨域
-    res.header('Access-Control-Allow-Origin', req.headers.origin)
-  }
+  res.header('Access-Control-Allow-Origin', req.headers.origin)
   // res.header('Access-Control-Allow-Origin', '*') // 访问控制允许来源：所有
   res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild')
   // res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept') // 访问控制允许报头 X-Requested-With: xhr请求
@@ -42,6 +40,7 @@ portIsOccupied(5657)
       // c.exec(`start http://localhost:${port}`)
     })
   })
+app.use(bodyParser.urlencoded({ extended: false }));//解析post请求数据
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
   extended: false
