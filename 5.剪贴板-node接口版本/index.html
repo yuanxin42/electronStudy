@@ -6,44 +6,21 @@
 </head>
 
 <body>
-  <div class="panel panel-default" style="margin: 10px">
-    <div class="panel-body">
-      <div class="form-horizontal" role="form">
-        <div class="form-group">
-          <label for="input_name" class="col-sm-2 control-label">登录帐号</label>
-          <div class="col-sm-10">
-            <input type="text" class="form-control" id="input_name" placeholder="请输入用户名">
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="input_pass" class="col-sm-2 control-label">登录密码</label>
-          <div class="col-sm-10">
-            <input type="password" class="form-control" id="input_pass" placeholder="请输入登录密码">
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="input_check" class="col-sm-2 control-label">验证码：</label>
-          <div class="col-sm-6">
-            <input type="text" class="form-control" id="input_check" placeholder="请输入验证码">
-          </div>
-          <div class="col-sm-2">
-            <img id="img_code" src="code.png" />
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="col-sm-offset-2 col-sm-2">
-            <button id="btn_submit" class="btn btn-default">登录</button>
-          </div>
-          <div class="col-sm-2">
-            <button id="btn_refresh" class="btn btn-default">刷新验证码</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <img id="myimg" src="./11.jpg" alt="">
+  <button id="btn_submit" class="btn btn-default">点我上传图片，然后Ctrl+V</button>
   <script>
-    // require('./index.js');
-
+    // import img11 from './11.jpg'
+    // const img11 =  require('./11.jpg');
+    function getBase64Image(img) { // 转换base64
+      var canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, img.width, img.height);
+      var ext = img.src.substring(img.src.lastIndexOf(".") + 1).toLowerCase();
+      var dataURL = canvas.toDataURL("image/" + ext);
+      return dataURL;
+    }
     function createXMLHTTPRequest() {
       //1.创建XMLHttpRequest对象     
       //这是XMLHttpReuquest对象无部使用中最复杂的一步     
@@ -79,7 +56,12 @@
     function get() {
       var req = createXMLHTTPRequest();
       if (req) {
-        req.open("GET", "http://localhost:5657/getid?id=46", true);
+        req.open("POST", "http://localhost:5657/uploadImg", true);
+        req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        let data = new FormData(); //创建form对象
+        var file = getBase64Image(document.getElementById("myimg"))
+        data.append('file', file);//通过append向form对象添加数据
+        console.log(data)
         req.onreadystatechange = function () {
           if (req.readyState == 4) {
             if (req.status == 200) {
@@ -91,11 +73,11 @@
             }
           }
         }
-        req.send(null);
+        req.send(data);
+        // req.send(null);
       }
     }
     let dom = document.querySelector('#btn_submit')
-    console.log(dom,'dom')
     dom.onclick = function () {
       console.log(111)
       get()

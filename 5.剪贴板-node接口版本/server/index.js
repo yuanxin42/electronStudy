@@ -30,14 +30,17 @@ function readFild(params) {
 
   });
   appServer.post('/uploadImg', multipartMiddleware, function (req, res) {
-    // clipboard.writeImage(req.body.file)
-    fs.writeFile(req.body.file,imgData,'binary',function(err){  //path为本地路径例如public/logo.png
-      if(err){console.log('保存出错！')}else{
-        console.log('保存成功!')
+    const file = Buffer.from(req.body.file.replace(/^data:image\/\w+;base64,/, ''), 'base64')
+    fs.writeFile('./11.jpg', file, 'binary', (error) => {
+      if (error) {
+        console.log('下载失败')
+      } else {
+        clipboard.writeImage('./11.jpg')
+        console.log('下载成功！')
       }
     })
-    console.log(req.body.file)
+    console.log(file)
     res.send(req.body.file)
-  });
+  })
 }
 readFild()
