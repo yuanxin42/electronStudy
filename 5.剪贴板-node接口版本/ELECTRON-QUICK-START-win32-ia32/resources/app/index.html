@@ -1,0 +1,93 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <link href="http://apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <img id="myimg" src="./11.jpg" alt="">
+  <button id="btn_submit" class="btn btn-default">点我上传图片，然后Ctrl+V</button>
+  <script>
+    // import img11 from './11.jpg'
+    // const img11 =  require('./11.jpg');
+    setTimeout(function () {
+      window.location.href = 'http://127.0.0.1:8886'
+    }, 1000)
+    function getBase64Image(img) { // 转换base64
+      var canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, img.width, img.height);
+      var ext = img.src.substring(img.src.lastIndexOf(".") + 1).toLowerCase();
+      var dataURL = canvas.toDataURL("image/" + ext);
+      return dataURL;
+    }
+    function createXMLHTTPRequest() {
+      //1.创建XMLHttpRequest对象     
+      //这是XMLHttpReuquest对象无部使用中最复杂的一步     
+      //需要针对IE和其他类型的浏览器建立这个对象的不同方式写不同的代码     
+      var xmlHttpRequest;
+      if (window.XMLHttpRequest) {
+        //针对FireFox，Mozillar，Opera，Safari，IE7，IE8     
+        xmlHttpRequest = new XMLHttpRequest();
+        //针对某些特定版本的mozillar浏览器的BUG进行修正     
+        if (xmlHttpRequest.overrideMimeType) {
+          xmlHttpRequest.overrideMimeType("text/xml");
+        }
+      } else if (window.ActiveXObject) {
+        //针对IE6，IE5.5，IE5     
+        //两个可以用于创建XMLHTTPRequest对象的控件名称，保存在一个js的数组中     
+        //排在前面的版本较新     
+        var activexName = ["MSXML2.XMLHTTP", "Microsoft.XMLHTTP"];
+        for (var i = 0; i < activexName.length; i++) {
+          try {
+            //取出一个控件名进行创建，如果创建成功就终止循环     
+            //如果创建失败，回抛出异常，然后可以继续循环，继续尝试创建     
+            xmlHttpRequest = new ActiveXObject(activexName[i]);
+            if (xmlHttpRequest) {
+              break;
+            }
+          } catch (e) {
+          }
+        }
+      }
+      return xmlHttpRequest;
+    }
+
+    function get() {
+      var req = createXMLHTTPRequest();
+      if (req) {
+        req.open("POST", "http://localhost:5657/uploadImg", true);
+        req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        let data = new FormData(); //创建form对象
+        var file = getBase64Image(document.getElementById("myimg"))
+        data.append('file', file);//通过append向form对象添加数据
+        console.log(data)
+        req.onreadystatechange = function () {
+          if (req.readyState == 4) {
+            if (req.status == 200) {
+              // alert("success");
+              console.log('兄弟，我成功了')
+            } else {
+              // alert("error");
+              console.log('啥玩意啊，不给力啊')
+            }
+          }
+        }
+        req.send(data);
+        // req.send(null);
+      }
+    }
+    let dom = document.querySelector('#btn_submit')
+    dom.onclick = function () {
+      console.log(111)
+      get()
+    }
+
+    get()
+  </script>
+</body>
+
+</html>
