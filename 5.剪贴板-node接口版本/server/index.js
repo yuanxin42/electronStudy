@@ -1,8 +1,9 @@
 // import appServer from './config.js'
 
 let { appServer } = require('./config.js')
-const { clipboard } = require('electron')
+const { clipboard,nativeImage } = require('electron')
 const fs = require('fs');
+const path = require('path');
 var multipart = require('connect-multiparty');
 
 var multipartMiddleware = multipart();
@@ -30,17 +31,21 @@ function readFild(params) {
 
   });
   appServer.post('/uploadImg', multipartMiddleware, function (req, res) {
-    const file = Buffer.from(req.body.file.replace(/^data:image\/\w+;base64,/, ''), 'base64')
-    fs.writeFile('./11.jpg', file, 'binary', (error) => {
-      if (error) {
-        console.log('下载失败')
-      } else {
-        clipboard.writeImage('./11.jpg')
-        console.log('下载成功！')
-      }
-    })
-    console.log(file)
-    res.send(req.body.file)
+    // const file = Buffer.from(req.body.file.replace(/^data:image\/\w+;base64,/, ''), 'base64')
+    // fs.writeFile('./11.jpg', file, 'binary', (error) => {
+    //   if (error) {
+    //     console.log('下载失败')
+    //   } else {
+    //     clipboard.writeImage('./11.jpg')
+    //     console.log('下载成功！')
+    //   }
+    // })
+    // console.log(file)
+    const imgPath = path.join(__dirname, '11.jpg')
+    const buf = fs.readFileSync(imgPath)
+    let nat = nativeImage.createFromBuffer(buf)
+    console.log(nat.toDataURL())
+    clipboard.writeImage(nat)
   })
 }
 readFild()
